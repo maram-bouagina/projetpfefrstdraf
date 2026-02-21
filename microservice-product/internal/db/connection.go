@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"projet/internal/config"
+	"projet/internal/models"
 	"time"
 
 	"gorm.io/driver/postgres"
@@ -12,11 +13,9 @@ import (
 	"gorm.io/gorm/logger"
 )
 
-
 func Connect(cfg config.Config) (*gorm.DB, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-
 
 	dsn := cfg.GetDBConnectionString()
 
@@ -28,8 +27,8 @@ func Connect(cfg config.Config) (*gorm.DB, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to connect to PostgreSQL: %v", err)
 	}
+	db.AutoMigrate(&models.Produit{})
 
-	
 	sqlDB, err := db.DB()
 	if err != nil {
 		return nil, fmt.Errorf("failed to get sql.DB: %v", err)

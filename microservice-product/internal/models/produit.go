@@ -31,6 +31,7 @@ type Produit struct {
 	SuiviStock      bool              `gorm:"not null;default:false"                         json:"suivi_stock"`
 	QuantiteStock   int               `gorm:"not null;default:0"                             json:"quantite_stock"`
 	Poids           *float64          `gorm:"type:decimal(10,4)"                             json:"poids,omitempty"`
+	Dimensions      *string           `gorm:"type:varchar(100)"                              json:"dimensions,omitempty"`
 	Marque          *string           `gorm:"type:varchar(255)"                              json:"marque,omitempty"`
 	ClasseTaxe      *string           `gorm:"type:varchar(100)"                              json:"classe_taxe,omitempty"`
 	Visibilite      VisibiliteProduit `gorm:"type:varchar(20);not null;default:publique"     json:"visibilite"`

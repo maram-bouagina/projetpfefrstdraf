@@ -2,17 +2,26 @@ version: '3.8'
 
 services:
   go-app:
+    #win l .env mawjoud lpath mta3ou
     volumes:
       - ./.env:/app/.env
+    #ism lcontianer
     container_name: go-app
+    #ism l'image w tag mta3ha
     image: produit/go-app:1.0.1
+
+    #dockerfile win (blastou)
     build: ./microservice-product
+    #akl url mtaa connexion
     environment:
      DATABASE_URL: "host=${DB_HOST} user=${DB_USER} password=${DB_PASSWORD} dbname=${DB_NAME} sslmode=disable"
+    #lports mtaa microservices
     ports:
       - "${APP_PORT:-8000}:8000"
+    #blch bhch ynjmch yikhdm
     depends_on:
       - go_db
+    #ki mtkhdch t3wd tkhdmou ill ki inti tstoopih whdou
     restart: unless-stopped
   go_db:
     container_name: go_db
@@ -23,6 +32,7 @@ services:
       POSTGRES_DB: ${DB_NAME}
     ports:
       - "${DB_PORT:-5432}:5432"
+    #win postgres mitkhobbi/ Docker creates a hidden folder on your computer to store it. You don't need to find it - Docker manages it for you.
     volumes:
       - pgdata:/var/lib/postgresql
 

@@ -55,19 +55,26 @@ func (r *ProduitRepo) GetByID(ctx context.Context, id, boutiqueID string) (*mode
 }
 
 func (r *ProduitRepo) Update(ctx context.Context, id, boutiqueID string, updates map[string]interface{}) (*models.Produit, error) {
+	/*yhdhr fil context mtaa bdd*/
 	opCtx, cancel := context.WithTimeout(ctx, 5*time.Second)
 	defer cancel()
 
+	/*9aad ybdati*/
+	//milloul yimchi li table produit bModel ou baad bidhbt win bl id. ou baad yaaml l u^date
 	result := r.db.WithContext(opCtx).Model(&models.Produit{}).
 		Where("id = ? AND boutique_id = ?", id, boutiqueID).
 		Updates(updates)
+
+	/*ytesti l9aha walla mal9ahech w njhit wella*/
 	if result.Error != nil {
 		return nil, fmt.Errorf("failed to update product: %w", result.Error)
 	}
+	//ml9a hatte ligne
 	if result.RowsAffected == 0 {
 		return nil, nil
 	}
 
+	/*ki nijhit 9aadin nlwjou bech nrja3ou lprod*/
 	var produit models.Produit
 	if err := r.db.WithContext(opCtx).Where("id = ?", id).First(&produit).Error; err != nil {
 		return nil, fmt.Errorf("product updated but failed to fetch: %w", err)
@@ -91,6 +98,7 @@ func (r *ProduitRepo) GetWithFilter(ctx context.Context, boutiqueID string, filt
 	defer cancel()
 
 	var produits []models.Produit
+	//query tab3a db bech taaml les requettes
 	query := r.db.WithContext(opCtx).Where("boutique_id = ?", boutiqueID)
 
 	if filter.Statut != nil {
@@ -109,9 +117,13 @@ func (r *ProduitRepo) GetWithFilter(ctx context.Context, boutiqueID string, filt
 		query = query.Where("supprime_le IS NULL")
 	}
 
+	//9dech nkhalliw min produits bech ykunu 9ad 9ad fi kl page.
 	offset := (filter.Page - 1) * filter.Limite
+
+	//naplliqiw lpagination Limit(filter.Limite) tkhu nombre  limite
 	query = query.Limit(filter.Limite).Offset(offset)
 
+	//find kima fi Liste
 	if err := query.Find(&produits).Error; err != nil {
 		return nil, fmt.Errorf("filter query failed: %w", err)
 	}

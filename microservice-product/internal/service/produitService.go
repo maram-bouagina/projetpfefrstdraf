@@ -10,6 +10,7 @@ import (
 	"time"
 )
 
+/*kik 3ada loula injectionde dépendance ou thneya constructeur*/
 type ProduitService struct {
 	repo *repository.ProduitRepo
 }
@@ -18,6 +19,7 @@ func NewProduitService(repo *repository.ProduitRepo) *ProduitService {
 	return &ProduitService{repo: repo}
 }
 
+/*t7wl ll produit model il reponse illi fo dto*/
 func (s *ProduitService) toResponse(p models.Produit) dto.ProduitResponse {
 	return dto.ProduitResponse{
 		ID:              p.ID,
@@ -46,11 +48,15 @@ func (s *ProduitService) Create(ctx context.Context, boutiqueID string, req dto.
 		return nil, errors.New("boutique ID is required")
 	}
 
+	//idhe knou much mwjoud ou idha knu fergh
 	if req.Slug == nil || *req.Slug == "" {
+
+		//ticrétih bmt3 lvaleur mtaa titre
 		slug := strings.ToLower(strings.ReplaceAll(req.Titre, " ", "-"))
 		req.Slug = &slug
 	}
 
+	//tisnaa3 produit
 	produit := &models.Produit{
 		BoutiqueID:      boutiqueID,
 		Titre:           req.Titre,
@@ -70,10 +76,12 @@ func (s *ProduitService) Create(ctx context.Context, boutiqueID string, req dto.
 		DatePublication: req.DatePublication,
 	}
 
+	//t3yt li repositroy
 	created, err := s.repo.CreateProduit(ctx, produit)
 	if err != nil {
 		return nil, err
 	}
+	//t3yt ll helper (func tit3wd bech nhiw redendance) illi lfou9
 	resp := s.toResponse(*created)
 	return &resp, nil
 }
@@ -82,18 +90,23 @@ func (s *ProduitService) List(ctx context.Context, boutiqueID string) ([]dto.Pro
 	if boutiqueID == "" {
 		return nil, errors.New("boutique ID is required")
 	}
+	//t3yt li repo
 	produits, err := s.repo.ListProduits(ctx, boutiqueID)
 	if err != nil {
 		return nil, err
 	}
+
+	//bch naamlou slice : tableaux dynamiques mi liste illi khdhineha
+	//resp = [ {}, {}, {} ]
+	//taille mta3ha nb de produits dans le db
 	resp := make([]dto.ProduitResponse, len(produits))
+	//l'index ou kl produit
 	for i, p := range produits {
 		resp[i] = s.toResponse(p)
 	}
 	return resp, nil
 }
 
-// GetByID returns a single product if it belongs to the boutique.
 func (s *ProduitService) GetByID(ctx context.Context, id, boutiqueID string) (*dto.ProduitResponse, error) {
 	if boutiqueID == "" {
 		return nil, errors.New("boutique ID is required")
@@ -114,13 +127,15 @@ func (s *ProduitService) Update(ctx context.Context, id, boutiqueID string, req 
 		return nil, errors.New("boutique ID is required")
 	}
 
+	//t3yt ll func illi fou9ha
 	_, err := s.GetByID(ctx, id, boutiqueID)
 	if err != nil {
 		return nil, err
 	}
-
+	//tisnaa slice
 	updates := make(map[string]interface{})
 
+	//affectation des valeurs
 	if req.Titre != nil {
 		updates["titre"] = *req.Titre
 	}
@@ -197,9 +212,13 @@ func (s *ProduitService) Search(ctx context.Context, boutiqueID string, filter d
 	if boutiqueID == "" {
 		return nil, 0, 0, errors.New("boutique ID is required")
 	}
+
+	/*fi go ki naamlouch valeur l valeur par défaut mtaa les entier est 0*/
+
 	if filter.Page == 0 {
 		filter.Page = 1
 	}
+	//ki mayaatikch twalli 20 par defaut
 	if filter.Limite == 0 {
 		filter.Limite = 20
 	}

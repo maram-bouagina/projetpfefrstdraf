@@ -1,0 +1,3 @@
+nhottou les pointeurs bech lfields y93dou optional
+ou bch mn93douch naamlou fi des copies les valeurs lkbar
+omitempty - C'est pour le JSON (affichage)

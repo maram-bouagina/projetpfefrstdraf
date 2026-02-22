@@ -1,15 +1,22 @@
+#técharger go pour la compilation
 FROM golang:1.24-alpine
+
+#houni yssir kl chy
 WORKDIR /app
 
-# Copy go module files first (for better caching)
+# copier la liste des dépendances
 COPY go.mod go.sum ./
+#télécharger les dépendances
 RUN go mod download
 
-# Then copy the rest of the source
+#copie ml code source
 COPY . .
 
-# Build the app – specify the exact main package path
+#Compile ton code en un fichier executable appelé api
 RUN go build -o api ./cmd/...
 
+#il port
 EXPOSE 8000
+
+#tlanci li programme
 CMD ["./api"]

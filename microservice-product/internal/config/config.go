@@ -8,25 +8,27 @@ import (
 )
 
 type Config struct {
+	/*holding the configuration values*/
 	// PostgreSQL
-	DBHost     string
-	DBPort     string
-	DBUser     string
-	DBPassword string
-	DBName     string
-	DBSSLMode  string
+	DBHost     string // win 9aad yrunni fi docker db-app wella localhost
+	DBPort     string //port mtaa postgres
+	DBUser     string //postgres user mtaa bdd
+	DBPassword string // password mtaa  bdd
+	DBName     string //nom mtaa bdd
+	DBSSLMode  string //  encrypt mtaa connection disabled wella disabled par défaut
 
-	// Server
+	// Server: 8000 par exemple
 	ServerPort string
 }
 
 func Load() (Config, error) {
-	// Load .env file
+	// Load .env file //// ta9rah
 	if err := godotenv.Load(); err != nil {
+		//trajaa struct faraght wl erreur
 		return Config{}, fmt.Errorf("error loading .env file: %v", err)
 	}
 
-	// Extract PostgreSQL variables
+	// tkhrj PostgreSQL variables
 	dbHost, err := extractEnv("DB_HOST")
 	if err != nil {
 		return Config{}, err
@@ -52,7 +54,7 @@ func Load() (Config, error) {
 		return Config{}, err
 	}
 
-	// SSL mode is optional (defaults to disable)
+	// hia chtaaml: lconnection yrudha chifrée idhe keni vide urudha diabled mahich dechifrée
 	dbSSLMode := os.Getenv("DB_SSLMODE")
 	if dbSSLMode == "" {
 		dbSSLMode = "disable"
@@ -75,6 +77,7 @@ func Load() (Config, error) {
 	}, nil
 }
 
+// lfunc illi staamlneha
 func extractEnv(key string) (string, error) {
 	val := os.Getenv(key)
 	if val == "" {
@@ -83,7 +86,7 @@ func extractEnv(key string) (string, error) {
 	return val, nil
 }
 
-// GetDBConnectionString returns PostgreSQL connection string
+// nistha9ou ha string bech nconnectiw mawjouda fi connection.go
 func (c Config) GetDBConnectionString() string {
 	return fmt.Sprintf(
 		"host=%s port=%s user=%s password=%s dbname=%s sslmode=%s",

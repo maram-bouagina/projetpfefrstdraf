@@ -18,6 +18,7 @@ func NewRouter(db *gorm.DB) *fiber.App {
 	})
 
 	routes.RegisterProduitRoutes(app, db)
-
+	routes.RegisterOptionRoutes(app, db)
+	routes.RegisterVarianteRoutes(app, db)
 	return app
 }

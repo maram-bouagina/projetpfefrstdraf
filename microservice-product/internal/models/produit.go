@@ -39,4 +39,8 @@ type Produit struct {
 	SupprimeLe      gorm.DeletedAt    `gorm:"index"                                          json:"supprime_le,omitempty"`
 	CreeLe          time.Time         `gorm:"autoCreateTime"                                 json:"cree_le"`
 	MisAJourLe      time.Time         `gorm:"autoUpdateTime"                                 json:"mis_a_jour_le"`
+
+	// Relations
+	Options   []OptionProduit `gorm:"foreignKey:ProduitID;constraint:OnDelete:CASCADE" json:"options,omitempty"`
+	Variantes []Variante      `gorm:"foreignKey:ProduitID;constraint:OnDelete:CASCADE" json:"variantes,omitempty"`
 }

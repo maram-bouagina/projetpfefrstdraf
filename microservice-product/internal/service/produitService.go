@@ -1,4 +1,4 @@
-package services
+package service
 
 import (
 	"context"
@@ -21,6 +21,31 @@ func NewProduitService(repo *repository.ProduitRepo) *ProduitService {
 
 /*t7wl ll produit model il reponse illi fo dto*/
 func (s *ProduitService) toResponse(p models.Produit) dto.ProduitResponse {
+	// 1. Convertir les options en réponses
+	options := make([]dto.OptionProduitResponse, len(p.Options))
+	for i, opt := range p.Options {
+		// Convertir les valeurs de cette option
+		valeurs := make([]dto.ValeurOptionResponse, len(opt.ValeurOpts))
+		for j, val := range opt.ValeurOpts {
+			valeurs[j] = dto.ValeurOptionResponse{
+				ID:       val.ID,
+				OptionID: val.OptionID,
+				Valeur:   val.Valeur,
+				Position: val.Position,
+			}
+		}
+
+		options[i] = dto.OptionProduitResponse{
+			ID:         opt.ID,
+			ProduitID:  opt.ProduitID,
+			Nom:        opt.Nom,
+			Position:   opt.Position,
+			CreeLe:     opt.CreeLe,
+			MisAJourLe: opt.MisAJourLe,
+			ValeurOpts: valeurs,
+		}
+	}
+
 	return dto.ProduitResponse{
 		ID:              p.ID,
 		Titre:           p.Titre,
@@ -40,6 +65,8 @@ func (s *ProduitService) toResponse(p models.Produit) dto.ProduitResponse {
 		DatePublication: p.DatePublication,
 		CreeLe:          p.CreeLe,
 		MisAJourLe:      p.MisAJourLe,
+		Options:         options,
+		Variantes:       []dto.VarianteResponse{},
 	}
 }
 

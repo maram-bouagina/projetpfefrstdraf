@@ -33,7 +33,8 @@ func (r *ProduitRepo) ListProduits(ctx context.Context, boutiqueID string) ([]mo
 	defer cancel()
 
 	var produits []models.Produit
-	if err := r.db.WithContext(opCtx).Where("boutique_id = ?", boutiqueID).Find(&produits).Error; err != nil {
+	if err := r.db.WithContext(opCtx).Where("boutique_id = ?", boutiqueID).
+		Find(&produits).Error; err != nil {
 		return nil, fmt.Errorf("find products failed: %w", err)
 	}
 	return produits, nil
@@ -44,7 +45,15 @@ func (r *ProduitRepo) GetByID(ctx context.Context, id, boutiqueID string) (*mode
 	defer cancel()
 
 	var produit models.Produit
-	err := r.db.WithContext(opCtx).Where("id = ? AND boutique_id = ?", id, boutiqueID).First(&produit).Error
+	err := r.db.WithContext(opCtx).Where("id = ? AND boutique_id = ?", id, boutiqueID).
+		Preload("Options", func(db *gorm.DB) *gorm.DB {
+			return db.Order("position")
+		}).
+		Preload("Options.ValeurOpts", func(db *gorm.DB) *gorm.DB {
+			return db.Order("position")
+		}).
+		Preload("Variantes").
+		First(&produit).Error
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
 			return nil, nil
@@ -76,7 +85,13 @@ func (r *ProduitRepo) Update(ctx context.Context, id, boutiqueID string, updates
 
 	/*ki nijhit 9aadin nlwjou bech nrja3ou lprod*/
 	var produit models.Produit
-	if err := r.db.WithContext(opCtx).Where("id = ?", id).First(&produit).Error; err != nil {
+	if err := r.db.WithContext(opCtx).Where("id = ?", id).Preload("Options", func(db *gorm.DB) *gorm.DB {
+		return db.Order("position")
+	}).
+		Preload("Options.ValeurOpts", func(db *gorm.DB) *gorm.DB {
+			return db.Order("position")
+		}).
+		Preload("Variantes").First(&produit).Error; err != nil {
 		return nil, fmt.Errorf("product updated but failed to fetch: %w", err)
 	}
 	return &produit, nil
@@ -122,6 +137,14 @@ func (r *ProduitRepo) GetWithFilter(ctx context.Context, boutiqueID string, filt
 
 	//naplliqiw lpagination Limit(filter.Limite) tkhu nombre  limite
 	query = query.Limit(filter.Limite).Offset(offset)
+
+	query = query.Preload("Options", func(db *gorm.DB) *gorm.DB {
+		return db.Order("position")
+	}).
+		Preload("Options.ValeurOpts", func(db *gorm.DB) *gorm.DB {
+			return db.Order("position")
+		}).
+		Preload("Variantes")
 
 	//find kima fi Liste
 	if err := query.Find(&produits).Error; err != nil {

@@ -34,7 +34,7 @@ func Connect(cfg config.Config) (*gorm.DB, error) {
 	}
 
 	//l Auto migration ti creati table si n'xiste pas. Automatiquement.
-	db.AutoMigrate(&models.Produit{})
+	db.AutoMigrate(&models.Produit{}, &models.OptionProduit{}, &models.ValeurOption{}, &models.Variante{})
 
 	//récupération de la connexion behind the scenes.
 	sqlDB, err := db.DB()
